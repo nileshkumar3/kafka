@@ -46,6 +46,10 @@ import java.util.Map;
  *
  * <p>Kafka Streams is packaged with some pre-existing {@code DslStoreSuppliers}
  * that exist in {@link BuiltInDslStoreSuppliers}
+ *
+ * <p>Store factory methods receive a parameter object ({@link DslKeyValueParams},
+ * {@link DslWindowParams}, or {@link DslSessionParams}) that exposes the requested
+ * store format via {@code dslStoreFormat()}.
  */
 public interface DslStoreSuppliers extends Configurable {
 
