@@ -65,6 +65,16 @@ Starting in Kafka Streams 2.6.x, a new processing mode is available, named EOS v
 
 Since 2.6.0 release, Kafka Streams depends on a RocksDB version that requires MacOS 10.14 or higher.
 
+## Streams API changes in 4.4.0
+
+### DSL store naming conventions ([KAFKA-20568](https://issues.apache.org/jira/browse/KAFKA-20568))
+
+DSL store format accessors and header-aware store builder types are renamed for consistency. Existing names remain available as deprecated aliases:
+
+* `DslSessionParams#storeFormat()` is deprecated; use `dslStoreFormat()` (aligned with `DslKeyValueParams` and `DslWindowParams`).
+* `TimestampedKeyValueStoreBuilderWithHeaders` is deprecated; use `TimestampedKeyValueStoreWithHeadersBuilder` (aligned with `TimestampedWindowStoreWithHeadersBuilder` and `SessionStoreWithHeadersBuilder`).
+* Public `Stores` factory methods are unchanged (`timestampedKeyValueStoreWithHeadersBuilder`, etc.).
+
 ## Streams API changes in 4.3.0
 
 **Note:** Kafka Streams 4.3.0 contains a critical native memory leak in the RocksDB state store layer ([KAFKA-20616](https://issues.apache.org/jira/browse/KAFKA-20616)). The `ColumnFamilyOptions` for the offsets column family is not closed, and column family handles can leak on close-path exceptions, which under cascading task closes (e.g., rebalances or error-triggered recoveries) leads to unbounded off-heap memory growth and eventual OOM. Users running Kafka Streams should consider upgrading directly to 4.3.1, which includes the fix for it.
@@ -79,7 +89,7 @@ Kafka Streams now persists state store changelog offsets inside each state store
 
 ### Header-aware state stores for the Processor API (KIP-1271) {#kip-1271-headers-aware-stores}
 
-Kafka Streams adds **header-aware** state stores. Opt in with the new `Stores` suppliers whose names end with `WithHeaders` and the matching `StoreBuilder` factories. For example:
+Kafka Streams adds **header-aware** state stores. Opt in with the new `Stores` suppliers whose names end with `WithHeaders` and the matching `StoreBuilder` factories whose names end with `WithHeadersBuilder`. For example:
 
 - `persistentTimestampedKeyValueStoreWithHeaders` with `timestampedKeyValueStoreWithHeadersBuilder`
 - `persistentTimestampedWindowStoreWithHeaders` with `timestampedWindowStoreWithHeadersBuilder`

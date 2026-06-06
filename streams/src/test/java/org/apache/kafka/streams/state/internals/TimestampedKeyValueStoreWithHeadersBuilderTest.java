@@ -69,19 +69,19 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
-public class TimestampedKeyValueStoreBuilderWithHeadersTest {
+public class TimestampedKeyValueStoreWithHeadersBuilderTest {
 
     @Mock
     private KeyValueBytesStoreSupplier supplier;
     @Mock
     private RocksDBTimestampedStoreWithHeaders inner;
-    private TimestampedKeyValueStoreBuilderWithHeaders<String, String> builder;
+    private TimestampedKeyValueStoreWithHeadersBuilder<String, String> builder;
 
     private void setUpWithoutInner() {
         when(supplier.name()).thenReturn("name");
         when(supplier.metricsScope()).thenReturn("metricScope");
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -182,28 +182,28 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
     public void shouldThrowNullPointerIfInnerIsNull() {
         setUpWithoutInner();
         assertThrows(NullPointerException.class, () ->
-            new TimestampedKeyValueStoreBuilderWithHeaders<>(null, Serdes.String(), Serdes.String(), new MockTime()));
+            new TimestampedKeyValueStoreWithHeadersBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime()));
     }
 
     @Test
     public void shouldNotThrowNullPointerIfKeySerdeIsNull() {
         setUpWithoutInner();
         // does not throw
-        new TimestampedKeyValueStoreBuilderWithHeaders<>(supplier, null, Serdes.String(), new MockTime());
+        new TimestampedKeyValueStoreWithHeadersBuilder<>(supplier, null, Serdes.String(), new MockTime());
     }
 
     @Test
     public void shouldNotThrowNullPointerIfValueSerdeIsNull() {
         setUpWithoutInner();
         // does not throw
-        new TimestampedKeyValueStoreBuilderWithHeaders<>(supplier, Serdes.String(), null, new MockTime());
+        new TimestampedKeyValueStoreWithHeadersBuilder<>(supplier, Serdes.String(), null, new MockTime());
     }
 
     @Test
     public void shouldThrowNullPointerIfTimeIsNull() {
         setUpWithoutInner();
         assertThrows(NullPointerException.class, () ->
-            new TimestampedKeyValueStoreBuilderWithHeaders<>(supplier, Serdes.String(), Serdes.String(), null));
+            new TimestampedKeyValueStoreWithHeadersBuilder<>(supplier, Serdes.String(), Serdes.String(), null));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn(null);
 
         final Exception e = assertThrows(NullPointerException.class,
-            () -> new TimestampedKeyValueStoreBuilderWithHeaders<>(supplier, Serdes.String(), Serdes.String(), new MockTime()));
+            () -> new TimestampedKeyValueStoreWithHeadersBuilder<>(supplier, Serdes.String(), Serdes.String(), new MockTime()));
         assertTrue(e.getMessage().contains("storeSupplier's metricsScope can't be null"));
     }
 
@@ -234,7 +234,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("in-memory");
         when(supplier.get()).thenReturn(new InMemoryKeyValueStore("test-store"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -287,7 +287,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("in-memory");
         when(supplier.get()).thenReturn(new InMemoryKeyValueStore("test-store"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -342,7 +342,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("metricScope");
         when(supplier.get()).thenReturn(new RocksDBTimestampedStoreWithHeaders("test-store", "metrics-scope"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -382,7 +382,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("metricScope");
         when(supplier.get()).thenReturn(new RocksDBTimestampedStore("test-store", "metrics-scope"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -425,7 +425,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("in-memory");
         when(supplier.get()).thenReturn(new InMemoryKeyValueStore("test-store"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -468,7 +468,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("metricScope");
         when(supplier.get()).thenReturn(new RocksDBTimestampedStoreWithHeaders("test-store", "metrics-scope"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -536,7 +536,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
             cache
         );
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -619,7 +619,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("metricScope");
         when(supplier.get()).thenReturn(new RocksDBTimestampedStoreWithHeaders("test-store", "metrics-scope"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -670,7 +670,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("metricScope");
         when(supplier.get()).thenReturn(new RocksDBTimestampedStore("test-store", "metrics-scope"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -725,7 +725,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("metricScope");
         when(supplier.get()).thenReturn(new RocksDBTimestampedStore("test-store", "metrics-scope"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),
@@ -782,7 +782,7 @@ public class TimestampedKeyValueStoreBuilderWithHeadersTest {
         when(supplier.metricsScope()).thenReturn("metricScope");
         when(supplier.get()).thenReturn(new RocksDBTimestampedStore("test-store", "metrics-scope"));
 
-        builder = new TimestampedKeyValueStoreBuilderWithHeaders<>(
+        builder = new TimestampedKeyValueStoreWithHeadersBuilder<>(
             supplier,
             Serdes.String(),
             Serdes.String(),

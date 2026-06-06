@@ -39,8 +39,8 @@ public class BuiltInDslStoreSuppliers {
 
         @Override
         public KeyValueBytesStoreSupplier keyValueStore(final DslKeyValueParams params) {
-            final DslStoreFormat storeFormat = params.dslStoreFormat();
-            switch (storeFormat) {
+            final DslStoreFormat dslStoreFormat = params.dslStoreFormat();
+            switch (dslStoreFormat) {
                 case HEADERS:
                     return Stores.persistentTimestampedKeyValueStoreWithHeaders(params.name());
                 case TIMESTAMPED:
@@ -48,16 +48,16 @@ public class BuiltInDslStoreSuppliers {
                 case PLAIN:
                     return Stores.persistentKeyValueStore(params.name());
                 default:
-                    throw new IllegalArgumentException("Unsupported DslStoreFormat: " + storeFormat +
+                    throw new IllegalArgumentException("Unsupported DslStoreFormat: " + dslStoreFormat +
                         ". Expected one of: HEADERS, TIMESTAMPED, or PLAIN");
             }
         }
 
         @Override
         public WindowBytesStoreSupplier windowStore(final DslWindowParams params) {
-            final DslStoreFormat storeFormat = params.dslStoreFormat();
+            final DslStoreFormat dslStoreFormat = params.dslStoreFormat();
             if (params.emitStrategy().type() == EmitStrategy.StrategyType.ON_WINDOW_CLOSE) {
-                final boolean withHeaders = (storeFormat == DslStoreFormat.HEADERS);
+                final boolean withHeaders = (dslStoreFormat == DslStoreFormat.HEADERS);
                 if (!withHeaders) {
                     return RocksDbIndexedTimeOrderedWindowBytesStoreSupplier.create(
                         params.name(),
@@ -77,8 +77,9 @@ public class BuiltInDslStoreSuppliers {
                 }
             }
 
-            final DslStoreFormat format = (storeFormat == null) ? DslStoreFormat.TIMESTAMPED : storeFormat;
-            switch (format) {
+            final DslStoreFormat resolvedDslStoreFormat =
+                dslStoreFormat == null ? DslStoreFormat.TIMESTAMPED : dslStoreFormat;
+            switch (resolvedDslStoreFormat) {
                 case HEADERS:
                     return Stores.persistentTimestampedWindowStoreWithHeaders(
                         params.name(),
@@ -99,7 +100,7 @@ public class BuiltInDslStoreSuppliers {
                         params.windowSize(),
                         params.retainDuplicates());
                 default:
-                    throw new IllegalStateException("Unsupported DslStoreFormat: " + format +
+                    throw new IllegalStateException("Unsupported DslStoreFormat: " + resolvedDslStoreFormat +
                         ". Expected one of: HEADERS, TIMESTAMPED, or PLAIN");
             }
         }
@@ -107,7 +108,7 @@ public class BuiltInDslStoreSuppliers {
         @Override
         public SessionBytesStoreSupplier sessionStore(final DslSessionParams params) {
             if (params.emitStrategy().type() == EmitStrategy.StrategyType.ON_WINDOW_CLOSE) {
-                if (params.storeFormat() == DslStoreFormat.HEADERS) {
+                if (params.dslStoreFormat() == DslStoreFormat.HEADERS) {
                     return new RocksDbTimeOrderedSessionHeadersBytesStoreSupplier(
                         params.name(),
                         params.retentionPeriod().toMillis(),
@@ -122,7 +123,7 @@ public class BuiltInDslStoreSuppliers {
                 }
             }
 
-            if (params.storeFormat() == DslStoreFormat.HEADERS) {
+            if (params.dslStoreFormat() == DslStoreFormat.HEADERS) {
                 return Stores.persistentSessionStoreWithHeaders(params.name(), params.retentionPeriod());
             }
             return Stores.persistentSessionStore(params.name(), params.retentionPeriod());
